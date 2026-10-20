@@ -35,8 +35,14 @@ const isOriginAllowed = (origin) => {
   if (!origin) return true;
   const cleanOrigin = origin.trim().replace(/\/+$/, '');
   if (allowedOrigins.has('*') || allowedOrigins.has(cleanOrigin)) return true;
-  const hasVercelConfigured = Array.from(allowedOrigins).some((o) => o.includes('vercel.app'));
-  if (hasVercelConfigured && cleanOrigin.endsWith('.vercel.app')) return true;
+  // Automatically allow any Vercel frontend deployments and previews
+  if (cleanOrigin.endsWith('.vercel.app')) return true;
+  for (const allowed of allowedOrigins) {
+    if (allowed.includes('*')) {
+      const regex = new RegExp('^' + allowed.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
+      if (regex.test(cleanOrigin)) return true;
+    }
+  }
   return false;
 };
 
