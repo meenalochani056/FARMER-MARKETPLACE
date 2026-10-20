@@ -1,0 +1,18 @@
+import { Router } from 'express';
+import { body } from 'express-validator';
+import { createProduct, deleteProduct, farmerProducts, farmerProfile, getProduct, listProducts, updateProduct } from '../controllers/productController.js';
+import { authenticate, allowRoles } from '../middleware/auth.js';
+import { upload } from '../middleware/upload.js';
+import validate from '../middleware/validate.js';
+import Category from '../models/Category.js';
+import { AppError } from '../utils/errors.js';
+const router = Router();
+router.get('/categories', async (req, res) => res.json({ categories: await Category.find().sort({ name: 1 }) }));
+router.get('/farmers/:id', farmerProfile);
+router.get('/farmers/:id/products', farmerProducts);
+router.get('/', listProducts);
+router.get('/:id', getProduct);
+router.post('/', authenticate, allowRoles('farmer'), upload.array('images', 6), [body('name').trim().notEmpty(), body('category').isMongoId(), body('price').isFloat({ gt: 0 }), body('quantity').isFloat({ gt: 0 }), body('minimumOrderQuantity').optional().isFloat({ gt: 0 })], validate, createProduct);
+router.put('/:id', authenticate, allowRoles('farmer', 'admin'), upload.array('images', 6), updateProduct);
+router.delete('/:id', authenticate, allowRoles('farmer', 'admin'), deleteProduct);
+export default router;

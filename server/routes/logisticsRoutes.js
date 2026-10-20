@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { body } from 'express-validator';
+import { createTracking, tracking, updateTracking } from '../controllers/miscController.js';
+import { authenticate, allowRoles } from '../middleware/auth.js';
+import validate from '../middleware/validate.js';
+const router = Router();
+router.use(authenticate);
+router.post('/', allowRoles('farmer', 'admin'), body('orderId').isMongoId(), validate, createTracking);
+router.get('/:orderId', tracking);
+router.put('/:orderId/status', allowRoles('farmer', 'admin'), body('status').isIn(['PICKUP_REQUESTED', 'PICKUP_SCHEDULED', 'PICKED_UP', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED']), validate, updateTracking);
+export default router;

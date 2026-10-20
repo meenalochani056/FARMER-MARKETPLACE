@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { body } from 'express-validator';
+import { currentUser, login, register, updateProfile } from '../controllers/authController.js';
+import { authenticate } from '../middleware/auth.js';
+import { upload } from '../middleware/upload.js';
+import validate from '../middleware/validate.js';
+const router = Router();
+router.post('/register', [body('name').trim().notEmpty(), body('email').isEmail(), body('password').isLength({ min: 8 }), body('role').isIn(['farmer', 'buyer'])], validate, register);
+router.post('/login', [body('email').isEmail(), body('password').notEmpty()], validate, login);
+router.get('/me', authenticate, currentUser);
+router.put('/profile', authenticate, upload.single('profileImage'), updateProfile);
+export default router;
