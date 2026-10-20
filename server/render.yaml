@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: farmer-marketplace-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false
+      - key: PORT
+        value: 10000
