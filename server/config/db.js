@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 
+const DEFAULT_MONGO_URI = 'mongodb+srv://310624104186_db_user:kAUQhFb7GKK7U6cu@farmermarket.rjo9v4h.mongodb.net/farmer_marketplace?retryWrites=true&w=majority';
+
 export default async function connectDatabase() {
-  if (!process.env.MONGO_URI) throw new Error('MONGO_URI is required');
+  const uri = process.env.MONGO_URI || DEFAULT_MONGO_URI;
   if (mongoose.connection.readyState >= 1) {
     return mongoose.connection;
   }
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 10000
     });
     console.log(`MongoDB connected: ${mongoose.connection.host}`);
