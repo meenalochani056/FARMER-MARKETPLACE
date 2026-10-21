@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const DEFAULT_MONGO_URI = 'mongodb+srv://310624104186_db_user:kAUQhFb7GKK7U6cu@farmermarket.rjo9v4h.mongodb.net/farmer_marketplace?retryWrites=true&w=majority';
+const DEFAULT_MONGO_URI = 'mongodb+srv://310624104186_db_user:kAUQhFb7GKK7U6cu@farmermarket.rjo9v4h.mongodb.net/test?retryWrites=true&w=majority';
 
 export default async function connectDatabase() {
   const uri = process.env.MONGO_URI || DEFAULT_MONGO_URI;
@@ -11,7 +11,7 @@ export default async function connectDatabase() {
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 10000
     });
-    console.log(`MongoDB connected: ${mongoose.connection.host}`);
+    console.log(`MongoDB connected: ${mongoose.connection.host} (DB: ${mongoose.connection.name})`);
     return mongoose.connection;
   } catch (error) {
     if (error.name === 'MongooseServerSelectionError') {
